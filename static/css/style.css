@@ -1,0 +1,51 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-image: 
+        linear-gradient(to bottom, rgba(182, 197, 165, 0.808), rgba(121, 94, 94, 0.733)),
+        url("static/img/image_strahov.jpg");
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    color: #000000;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+
+/* Specific styles for books.html */
+.books-page {
+    font-family: 'Georgia', serif; /* Change the font to Georgia */
+    font-size: 16px; /* Adjust the font size */
+    color: #000000; /* Set the text color */
+}
+
+.books-page h1 {
+    font-family: 'Arial', sans-serif; /* Use a different font for the heading */
+    font-size: 24px;
+    color: #000000;
+}
+
+
+
+.books-page table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: large;
+    font-weight: bold; /* Makes the font bold */
+}
+
+.books-page th, .books-page td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.books-page th {
+    background-color: #f2f2f2; /* Light gray background for headers */
+    font-weight: bold; /* Ensure headers are bold */
+}

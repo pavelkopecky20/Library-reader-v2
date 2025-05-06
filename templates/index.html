@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Library Reader{% endblock %}
+
+{% block content %}
+<h2>Vítejte v aplikaci Library Reader</h2>
+<p>Nahraj obrázek své knihovny a aplikace ti vypíše seznam tvých knih a autorů</p>
+<form method="POST" enctype="multipart/form-data">
+    <input type="file" name="image">
+    <input type="submit" value="Nahrát obrázek">
+</form>
+<a href="{{ url_for('books') }}">Seznam všech knih</a>
+{% endblock %}

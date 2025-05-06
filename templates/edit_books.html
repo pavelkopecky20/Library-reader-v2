@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Books - Library Reader{% endblock %}
+
+{% block content %}
+<h2>Edit Books</h2>
+<form method="POST">
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Read</th>
+                <th>Rating</th>
+                <th>Abstract</th>
+                <th>Comment</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+            <tr>
+                <td><input type="text" name="title_{{ book.id }}" value="{{ book.title }}"></td>
+                <td><input type="text" name="author_{{ book.id }}" value="{{ book.author }}"></td>
+                <td><input type="checkbox" name="is_read_{{ book.id }}" {% if book.is_read %}checked{% endif %}></td>
+                <td><input type="number" name="rating_{{ book.id }}" value="{{ book.rating }}" min="1" max="10"></td>
+                <td><textarea name="abstract_{{ book.id }}">{{ book.abstract }}</textarea></td>
+                <td><textarea name="comment_{{ book.id }}">{{ book.comment }}</textarea></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <input type="submit" value="Save Changes">
+</form>
+{% endblock %}
