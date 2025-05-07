@@ -4,10 +4,12 @@
 
 {% block content %}
 <h2>Vítejte v aplikaci Library Reader</h2>
-<p>Nahraj obrázek své knihovny a aplikace ti vypíše seznam tvých knih a autorů</p>
+<p>Nahraj fotku svých knih a aplikace ti vypíše seznam tvých knih a autorů</p>
+<p>Můžeš k nim přidat své hodnocení a komentáře</p>
 <form method="POST" enctype="multipart/form-data">
     <input type="file" name="image">
     <input type="submit" value="Nahrát obrázek">
+    <a href="{{ url_for('books') }}">Seznam všech knih</a>
 </form>
-<a href="{{ url_for('books') }}">Seznam všech knih</a>
+
 {% endblock %}

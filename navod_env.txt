@@ -1,0 +1,7 @@
+zkontrolovat cestu k souboru C:\Users\m000xz009726\Downloads\Python soubory a učení\library_reader\vision-key.json
+na OneDrive nejde nastavit env prostředí jako správe. Proto přesunout projekt na pevný disk.
+
+pip uninstall python-dotenv
+pip install python-dotenv
+
+po nastavení env prostředí restartovat počítač 

@@ -1,0 +1,22 @@
+# .gitignore
+env/
+.env
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+.idea/
+.vscode/
+
+# Ignore virtual environments and large files
+*.dll
+*.pyd
+*.lib
+
+*.pyo
+
+# SQLite database
+*.db
+
+# Uploads
+uploads/

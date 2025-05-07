@@ -4,6 +4,7 @@
 
 {% block content %}
 <main class="books-page">
+<a href="{{ url_for('index') }}">Zpět na hlavní stránku</a>
 <h1>Rozpoznané knihy</h1>
 <table border="1">
     <tr>
@@ -29,6 +30,6 @@
     {% endfor %}
 </table>
 <br>
-<a href="{{ url_for('index') }}">Zpět</a>
+<a href="{{ url_for('index') }}">Zpět na hlavní stránku</a>
 </main>
 {% endblock %}

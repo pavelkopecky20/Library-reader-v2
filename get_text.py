@@ -2,47 +2,62 @@ import io
 import os
 from google.cloud import vision
 from dotenv import load_dotenv
-
 import openai
 import json
 
 # Nastavíme proměnnou prostředí k API klíči
-
 load_dotenv()
-image_path = r"C:\Users\m000xz009726\OneDrive\Programování\Library_reader\library_reader\kniha3.jpg"        # jen testovací, později zrušit
+# image_path = r"C:\Users\m000xz009726\OneDrive\Programování\Library_reader\library_reader\kniha3.jpg"        # jen testovací, později zrušit
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
-   
-def detect_text_from_file(image):
-    client = vision.ImageAnnotatorClient()
-
-    # Pokud je to objekt PIL.Image (např. z Pillow), převedeme ho do bytes
-    if hasattr(image, 'save'):
-        image_bytes = io.BytesIO()
-        image.save(image_bytes, format='JPEG')  # nebo 'PNG', podle formátu
-        content = image_bytes.getvalue()
-    elif isinstance(image, str):
-        # Jinak očekáváme cestu k souboru
-        with io.open(image, 'rb') as file:
-            content = file.read()
-    else:
-        raise ValueError("Neplatný typ vstupu – očekáván obrázek nebo cesta k souboru.")
-
-    vision_image = vision.Image(content=content)
-    response = client.text_detection(image=vision_image)
-    texts = response.text_annotations
-
-    if texts:
-        return texts[0].description
-    else:
-        return "Nebyly rozpoznány žádné texty."
-
+# Debugging environmentální proměnné pro Google Cloud Vision API Credentials
+credentials_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+if not credentials_path:
+    print("❌ GOOGLE_APPLICATION_CREDENTIALS is not set.")
+elif not os.path.exists(credentials_path):
+    print(f"❌ File not found: {credentials_path}")
+else:
+    print(f"✅ Credentials file found: {credentials_path}")
+    
+# Debugging environment variable for OpenAI API key
 openai.api_key = os.getenv("OPENAI_API_KEY")
+if not openai.api_key:
+    print("❌ OPENAI_API_KEY is not set.")
+else:
+    print("✅ OPENAI_API_KEY is set.")    
+    
+       
+def detect_text_from_file(image):
+    try:
+        client = vision.ImageAnnotatorClient()
+
+        # Pokud je to objekt PIL.Image (např. z Pillow), převedeme ho do bytes
+        if hasattr(image, 'save'):
+            image_bytes = io.BytesIO()
+            image.save(image_bytes, format='JPEG')  # nebo 'PNG', podle formátu
+            content = image_bytes.getvalue()
+        elif isinstance(image, str):
+            # Jinak očekáváme cestu k souboru
+            with io.open(image, 'rb') as file:
+                content = file.read()
+        else:
+            raise ValueError("Neplatný typ vstupu – očekáván obrázek nebo cesta k souboru.")
+
+        vision_image = vision.Image(content=content)
+        response = client.text_detection(image=vision_image)
+        texts = response.text_annotations
+
+        if texts:
+            return texts[0].description
+        else:
+            return "Nebyly rozpoznány žádné texty."
+    except Exception as e:
+        print(f"❌ Error in Vision API: {e}")
+        return "Error in Vision API"
+
+
 # client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))  # - původní, změnilo se knihovna import openai
 MOCK_MODE = False # Přepínač: True = testovací režim bez volání API
 # image_path = r"C:\Users\m000xz009726\OneDrive\Programování\Library_reader\library_reader\kniha3.jpg"  - # uživatel nahraje jpg přes formulář, takže se nepoužívá. Ale funguje
-
-# prompt_user = detect_text_from_file(image_path)
 
 # PROMPT pro OpenAI (co se má dít)
 prompt_system = (
