@@ -24,10 +24,17 @@ import base64
 # Decode the Base64 string - uloží to jako soubor
 credentials_base64 = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_BASE64")
 if credentials_base64:
-    credentials_path = "/tmp/vision-key.json"  # Temporary path for the file
-    with open(credentials_path, "wb") as f:
-        f.write(base64.b64decode(credentials_base64))
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
+    try:
+        credentials_path = "/tmp/vision-key.json"  # Temporary path for the file
+        with open(credentials_path, "wb") as f:
+            f.write(base64.b64decode(credentials_base64))
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
+        print(f"✅ Credentials file created at: {credentials_path}")
+    except Exception as e:
+        print(f"❌ Error decoding Base64 credentials: {e}")
+else:
+    print("❌ GOOGLE_APPLICATION_CREDENTIALS_BASE64 is not set.")
+
 
 # Vytvoření databázových tabulek - dělá se migrací, není třeba
 
