@@ -10,13 +10,24 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
 from get_text import detect_text_from_file, get_books_and_authors
-
+import base64
 
 app = Flask(__name__)
 app.config.from_object("config")
 
 db.init_app(app)
 migrate = Migrate(app, db)
+
+import os
+import base64
+
+# Decode the Base64 string - uloží to jako soubor
+credentials_base64 = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_BASE64")
+if credentials_base64:
+    credentials_path = "/tmp/vision-key.json"  # Temporary path for the file
+    with open(credentials_path, "wb") as f:
+        f.write(base64.b64decode(credentials_base64))
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
 
 # Vytvoření databázových tabulek - dělá se migrací, není třeba
 
