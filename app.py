@@ -35,6 +35,9 @@ if credentials_base64:
 else:
     print("❌ GOOGLE_APPLICATION_CREDENTIALS_BASE64 is not set.")
 
+if not os.path.exists("/tmp/library_reader.db"):
+    with open("/tmp/library_reader.db", "w"):
+        pass
 
 # Vytvoření databázových tabulek - dělá se migrací, není třeba
 
