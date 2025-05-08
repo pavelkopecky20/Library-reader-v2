@@ -70,17 +70,19 @@ def index():
             print(f"❌ Chyba při ukládání souboru: {e}")
             return render_template("index.html", error="Chyba při ukládání souboru.")
 
-        
+        # Process the file
+        print("✅ File processing started.")
         text = detect_text_from_file(filepath)  # získáme text, zavolá se AI API na detekci textu z obrázku
+        print(f"✅ Text detected: {text}")
         if "Error" in text:
             return render_template("index.html", error=text)  # pokud je chyba, vrátí se na index.html
 
-        books = get_books_and_authors(text)     # zavolá se OpenAI na rozpoznání autora a názvu z textu
+        books = get_books_and_authors(text)  # zavolá se OpenAI na rozpoznání autora a názvu z textu
+        print(f"✅ Books detected: {books}")
         if not books:
             return render_template("index.html", error="Nebyly rozpoznány žádné knihy.") 
-        # print(books)
         
-        # # Uložení do db - funguje
+        # Save to database
         try:
             for item in books:
                 title = item.get('title') or "Bez názvu"
