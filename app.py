@@ -38,7 +38,7 @@ else:
 
 # Vytvoření databázových tabulek - dělá se migrací, není třeba
 
-UPLOAD_FOLDER = "uploads"
+UPLOAD_FOLDER = "tmp/uploads"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER     # nahrávání obrázků
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
@@ -47,57 +47,66 @@ if not os.path.exists(UPLOAD_FOLDER):
 else:
     print(f"✅ Upload folder exists: {UPLOAD_FOLDER}")
 
+
 @app.route("/", methods=["GET", "POST"])
 def index():
-    print("Vše - index.html se spustilo v pořádku.  Route '/' accessed.")
+    print("✅ Route '/' accessed.")
     if request.method == "POST":
         print("✅ POST request received.")
         file = request.files.get("image")
         if not file:
-            print("❌ Nenahráli jste soubor s obrázky knih.")
+            print("❌ No file uploaded.")
             return render_template("index.html", error="Nenahráli jste soubor s obrázky knih.")
-       
+        
         filename = secure_filename(file.filename)
         if not filename:
-            print("❌ Chyba: Nahraný soubor nemá platný název.")
+            print("❌ Invalid file name.")
             return render_template("index.html", error="Nahraný soubor nemá platný název.")
-   
+        
         filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
         try:
             file.save(filepath)
-            print(f"✅ Soubor byl úspěšně uložen: {filepath}")
+            print(f"✅ File successfully saved: {filepath}")
         except Exception as e:
-            print(f"❌ Chyba při ukládání souboru: {e}")
+            print(f"❌ Error saving file: {e}")
             return render_template("index.html", error="Chyba při ukládání souboru.")
-
+        
         # Process the file
         print("✅ File processing started.")
-        text = detect_text_from_file(filepath)  # získáme text, zavolá se AI API na detekci textu z obrázku
-        print(f"✅ Text detected: {text}")
-        if "Error" in text:
-            return render_template("index.html", error=text)  # pokud je chyba, vrátí se na index.html
-
-        books = get_books_and_authors(text)  # zavolá se OpenAI na rozpoznání autora a názvu z textu
-        print(f"✅ Books detected: {books}")
+        try:
+            text = detect_text_from_file(filepath)
+            print(f"✅ Text detected: {text}")
+        except Exception as e:
+            print(f"❌ Error detecting text: {e}")
+            return render_template("index.html", error="Chyba při zpracování obrázku.")
+        
+        try:
+            books = get_books_and_authors(text)
+            print(f"✅ Books detected: {books}")
+        except Exception as e:
+            print(f"❌ Error detecting books: {e}")
+            return render_template("index.html", error="Chyba při rozpoznávání knih.")
+        
         if not books:
-            return render_template("index.html", error="Nebyly rozpoznány žádné knihy.") 
+            print("❌ No books detected.")
+            return render_template("index.html", error="Nebyly rozpoznány žádné knihy.")
         
         # Save to database
         try:
             for item in books:
                 title = item.get('title') or "Bez názvu"
-                author = item.get('author') or "Neznámý" 
+                author = item.get('author') or "Neznámý"
                 book = Book(title=title, author=author)
                 db.session.add(book)
             db.session.commit()
-            print("✅ Data byla úspěšně uložena do databáze.")
+            print("✅ Data successfully saved to the database.")
         except Exception as e:
-            print(f"❌ Chyba při ukládání do databáze: {e}")
-            db.session.rollback()  # vrátí poslední změny v db
+            print(f"❌ Error saving to database: {e}")
+            db.session.rollback()
             return render_template("index.html", error="Chyba při ukládání do databáze.")
-        return redirect(url_for("books"))  # přesměrování na knihy
-    return render_template("index.html")  # pokud je GET, vrátí se na index.html
-
+        
+        return redirect(url_for("books"))
+    return render_template("index.html")
 
 @app.route("/books")
 def books():
