@@ -9,3 +9,9 @@ po nastavení env prostředí restartovat počítač
 starý klíč: "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"
 
 https://vercel.com/pavels-projects-96e25530/~/integrations/github
+
+
+Vercel
+potřeba vytvořit Base64 - klíč ve vision-key.json se tam převede
+na Vercel se pak nahraje jeho String
+a taky se na Vercel nahrají Credentials, postupně je to prý bezpečné
