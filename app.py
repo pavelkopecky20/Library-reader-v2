@@ -38,8 +38,8 @@ else:
 
 # Vytvoření databázových tabulek - dělá se migrací, není třeba
 
-UPLOAD_FOLDER = "tmp/uploads"
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER     # nahrávání obrázků
+UPLOAD_FOLDER = "/tmp/uploads"
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 if not os.path.exists(UPLOAD_FOLDER):
