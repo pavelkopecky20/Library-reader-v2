@@ -22,21 +22,9 @@ body {
     font-family: 'Georgia', serif; /* Change the font to Georgia */
     font-size: 16px; /* Adjust the font size */
     color: #000000; /* Set the text color */
-}
-
-.books-page h1 {
-    font-family: 'Arial', sans-serif; /* Use a different font for the heading */
-    font-size: 24px;
-    color: #000000;
-}
-
-
-
-.books-page table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: large;
-    font-weight: bold; /* Makes the font bold */
+    padding: 20px; /* Add padding for better spacing */
+    border-radius: 8px; /* Add rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
 }
 
 .books-page th, .books-page td {
@@ -45,10 +33,27 @@ body {
     border: 1px solid #ddd;
 }
 
-.books-page th {
-    background-color: #f2f2f2; /* Light gray background for headers */
-    font-weight: bold; /* Ensure headers are bold */
+/* Specific styles for books.html */
+.books-page {
+    font-family: 'Georgia', serif; /* Change the font to Georgia */
+    font-size: 16px; /* Adjust the font size */
+    color: #000000; /* Set the text color */
+    padding: 20px; /* Add padding for better spacing */
+    border-radius: 8px; /* Add rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
 }
+
+.books-page table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: large;
+    font-weight: bold; /* Makes the font bold */
+    background-color: rgba(255, 255, 255, 0.9); /* Add a semi-transparent white background */
+    border-radius: 8px; /* Add rounded corners to the table */
+    overflow: hidden; /* Ensure rounded corners apply */
+}
+
+
 
 header {
     padding: 1px;
@@ -78,9 +83,10 @@ h2 {
 /* Paragraph styles */
 p {
     text-align: center;
-    font-size: 16px;
+    font-size: 20px;
     margin: 10px 0;
     color: #000000d6;
+    font-weight: bold;
 }
 
 /* Form styles */
@@ -104,6 +110,8 @@ input[type="file"] {
     margin-bottom: 15px;
 }
 
+
+
 input[type="submit"] {
     background-color: #4CAF50;
     color: white;
@@ -118,14 +126,35 @@ input[type="submit"]:hover {
     background-color: #45a049;
 }
 
+/* Style the file input button */
+input[type="file"]::file-selector-button {
+    background-color: #4CAF50; /* Match the "Nahrát obrázek" button */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+input[type="file"]::file-selector-button:hover {
+    background-color: #45a049; /* Match the hover effect */
+}
+
 /* Link styles */
 a {
-    display: block;
     text-align: center;
     margin-top: 20px;
+    background-color: #45a049;
+    border: none;
     color: #321e7e;
     text-decoration: none;
     font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    
 }
 
 a:hover {
