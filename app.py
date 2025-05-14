@@ -7,7 +7,7 @@ from forms import BookForm
 
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+from flask_migrate import Migrate, upgrade
 
 from get_text import detect_text_from_file, get_books_and_authors
 import base64
@@ -49,6 +49,17 @@ if not os.path.exists(UPLOAD_FOLDER):
     print(f"❌ Upload folder not created: {UPLOAD_FOLDER}")
 else:
     print(f"✅ Upload folder exists: {UPLOAD_FOLDER}")
+
+from flask_migrate import upgrade
+
+@app.before_first_request       # pro db - migrace 
+def apply_migrations():
+    try:
+        print("🔄 Applying database migrations...")
+        upgrade()
+        print("✅ Migrations applied successfully.")
+    except Exception as e:
+        print(f"❌ Error applying migrations: {e}")
 
 
 @app.route("/", methods=["GET", "POST"])
