@@ -8,12 +8,13 @@
 <p>Ideálně nahraj fotku hřbetu knih vyfocených v tvé knihovně</p>
 <p>Můžeš k nim přidat své hodnocení a komentáře</p>
 
-<form method="POST" enctype="multipart/form-data">
+<form id="uploadForm" method="POST" enctype="multipart/form-data">
     <input type="file" name="image" id="image">
     <input type="submit" value="Převést na text">
     <a href="{{ url_for('books') }}">Seznam všech knih</a>
 </form>
 
+<script src="https://cdn.jsdelivr.net/npm/pica/dist/pica.min.js"></script>
 <script>
     async function resizeImage(file) {
         const pica = new Pica();
@@ -58,11 +59,13 @@
         return new File([blob], file.name, { type: 'image/jpeg' });
     }
 
-    document.getElementById('image').addEventListener('change', async (event) => {
-        const fileInput = event.target;
+    document.getElementById('uploadForm').addEventListener('submit', async (event) => {
+        const fileInput = document.getElementById('image');
         const file = fileInput.files[0];
 
         if (file) {
+            event.preventDefault(); // Prevent the form from submitting immediately
+
             console.log('Original file size:', file.size / 1024, 'KB');
 
             // Resize and compress the image
@@ -75,6 +78,9 @@
             fileInput.files = dataTransfer.files;
 
             console.log('File replaced with resized version.');
+
+            // Submit the form programmatically after replacing the file
+            event.target.submit();
         }
     });
 </script>
