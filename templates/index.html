@@ -3,27 +3,57 @@
 {% block title %}Home - Library Reader{% endblock %}
 
 {% block content %}
-<h2>Vítejte v aplikaci Library Reader</h2>
+<h2>Vítejte v aplikaci Library Reader</h2> 
 <p>Nahraj fotku tvých knih a aplikace ti vypíše seznam knih a autorů</p>
 <p>Ideálně nahraj fotku hřbetu knih vyfocených v tvé knihovně</p>
 <p>Můžeš k nim přidat své hodnocení a komentáře</p>
 
 <form method="POST" enctype="multipart/form-data">
-    <input type="file" name="image" id="image" onchange="validateFileSize()">
+    <input type="file" name="image" id="image">
     <input type="submit" value="Převést na text">
     <a href="{{ url_for('books') }}">Seznam všech knih</a>
 </form>
 
+<script src="https://cdn.jsdelivr.net/npm/pica/dist/pica.min.js"></script>
 <script>
-    function validateFileSize() {
-        const fileInput = document.getElementById('image');
-        const file = fileInput.files[0];
-        if (file && file.size > 10 * 1024 * 1024) { // 10 MB limit
-            alert('Soubor je příliš velký. Maximální velikost je 10 MB.');
-            fileInput.value = ''; // Clear the file input
-        }
-    }
-</script>
+    async function resizeImage(file) {
+        const pica = new Pica();
+        const img = document.createElement('img');
+        const canvas = document.createElement('canvas');
 
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+
+        await new Promise((resolve) => (img.onload = resolve));
+
+        canvas.width = 1024; // Resize width
+        canvas.height = (img.height / img.width) * 1024; // Maintain aspect ratio
+
+        const resizedCanvas = await pica.resize(img, canvas);
+        const blob = await pica.toBlob(resizedCanvas, 'image/jpeg', 0.85); // Compress to 85% quality
+
+        return new File([blob], file.name, { type: 'image/jpeg' });
+    }
+
+    document.getElementById('image').addEventListener('change', async (event) => {
+        const fileInput = event.target;
+        const file = fileInput.files[0];
+
+        if (file) {
+            // Resize and compress the image
+            const resizedFile = await resizeImage(file);
+            console.log('Original file size:', file.size / 1024, 'KB');
+            console.log('Resized file size:', resizedFile.size / 1024, 'KB');
+
+            // Replace the original file with the resized file
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(resizedFile);
+            fileInput.files = dataTransfer.files;
+        }
+    });
+</script>
 
 {% endblock %}
