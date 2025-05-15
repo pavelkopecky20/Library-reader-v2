@@ -5,82 +5,43 @@
 {% block content %}
 <h2>Vítejte v aplikaci Library Reader</h2> 
 <p>Nahraj fotku tvých knih a aplikace ti vypíše seznam knih a autorů</p>
-<p>Ideálně nahraj fotku hřbetu knih vyfocených v tvé knihovně</p>
-<p>Můžeš k nim přidat své hodnocení a komentáře</p>
+<p>Ideálně nahraj fotku hřbetu knih</p>
+<p>Budeš k nim moci přidat své hodnocení a komentáře</p>
 
 <form id="uploadForm" method="POST" enctype="multipart/form-data">
-    <input type="file" name="image" id="image">
+    <div class="file-input-container">
+        <input type="file" name="image" id="image">
+    </div>
     <input type="submit" value="Převést na text">
     <a href="{{ url_for('books') }}">Seznam všech knih</a>
 </form>
 
-<script src="https://cdn.jsdelivr.net/npm/pica/dist/pica.min.js"></script>
 <script>
-    async function resizeImage(file) {
-        const pica = new Pica();
-        const img = document.createElement('img');
-        const canvas = document.createElement('canvas');
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-
-        await new Promise((resolve) => (img.onload = resolve));
-
-        // Calculate new dimensions while maintaining aspect ratio
-        const maxWidth = 1024;
-        const maxHeight = 1024;
-        let width = img.width;
-        let height = img.height;
-
-        if (width > height) {
-            if (width > maxWidth) {
-                height = Math.round((height * maxWidth) / width);
-                width = maxWidth;
-            }
-        } else {
-            if (height > maxHeight) {
-                width = Math.round((width * maxHeight) / height);
-                height = maxHeight;
-            }
-        }
-
-        canvas.width = width;
-        canvas.height = height;
-
-        // Resize the image
-        await pica.resize(img, canvas);
-
-        // Compress the image
-        const blob = await pica.toBlob(canvas, 'image/jpeg', 0.85); // 85% quality
-
-        return new File([blob], file.name, { type: 'image/jpeg' });
-    }
-
-    document.getElementById('uploadForm').addEventListener('submit', async (event) => {
+    document.getElementById('uploadForm').addEventListener('submit', (event) => {
         const fileInput = document.getElementById('image');
         const file = fileInput.files[0];
 
         if (file) {
-            event.preventDefault(); // Prevent the form from submitting immediately
+            const fileSizeMB = file.size / (1024 * 1024); // Convert file size to MB
+            if (fileSizeMB > 4) { // Check if file size exceeds 4 MB
+                alert('Soubor je příliš velký. Maximální velikost je 4 MB.');
+                event.preventDefault(); // Prevent form submission
+                return;
+            }
+        } else {
+            alert('Vyberte prosím soubor.');
+            event.preventDefault(); // Prevent form submission
+        }
+    });
 
-            console.log('Original file size:', file.size / 1024, 'KB');
-
-            // Resize and compress the image
-            const resizedFile = await resizeImage(file);
-            console.log('Resized file size:', resizedFile.size / 1024, 'KB');
-
-            // Replace the original file with the resized file
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(resizedFile);
-            fileInput.files = dataTransfer.files;
-
-            console.log('File replaced with resized version.');
-
-            // Submit the form programmatically after replacing the file
-            event.target.submit();
+    // Update the "Soubor nevybrán" text when a file is selected
+    document.getElementById('image').addEventListener('change', (event) => {
+        const fileInput = event.target;
+        const fileStatus = document.getElementById('fileStatus');
+        if (fileInput.files.length > 0) {
+            fileStatus.textContent = fileInput.files[0].name;
+        } else {
+            fileStatus.textContent = 'Soubor nevybrán';
         }
     });
 </script>
