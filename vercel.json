@@ -1,25 +1,25 @@
 {
-    "version": 2,
-    "builds": [
-      {
-        "src": "app.py",
-        "use": "@vercel/python"
-      }
-    ],
-    "routes": [
-      {
-        "src": "/(.*)",
-        "dest": "app.py"
-      }
-    ]
-  }
+  "version": 2,
+  "builds": [
+    {
+      "src": "app.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "app.py"
+    }
+  ]
+}
 
-  {
-    "functions": {
-      "api/*.js": {
-        "maxDuration": 10,
-        "maxMemory": 128,
-        "maxRequestSize": "10mb"
-      }
+{
+  "functions": {
+    "api/*.js": {
+      "maxDuration": 10,
+      "maxMemory": 128,
+      "maxRequestSize": "10mb"
     }
   }
+}
