@@ -18,8 +18,8 @@
     function validateFileSize() {
         const fileInput = document.getElementById('image');
         const file = fileInput.files[0];
-        if (file && file.size > 4 * 1024 * 1024) { // 4 MB limit
-            alert('Soubor je příliš velký. Maximální velikost je 4 MB.');
+        if (file && file.size > 10 * 1024 * 1024) { // 10 MB limit
+            alert('Soubor je příliš velký. Maximální velikost je 10 MB.');
             fileInput.value = ''; // Clear the file input
         }
     }
