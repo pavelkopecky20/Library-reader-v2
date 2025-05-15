@@ -52,7 +52,7 @@ else:
 
 from flask_migrate import upgrade
 
-@app.before_first_request       # pro db - migrace 
+@app.before_first_request       # pro db - migrace db
 def apply_migrations():
     try:
         print("🔄 Applying database migrations...")
