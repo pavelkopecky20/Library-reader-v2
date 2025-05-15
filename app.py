@@ -80,6 +80,7 @@ def index():
         filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
         try:
             file.save(filepath)
+            optimize_image(filepath)  # zavolá se funkce na zmenšení velikosti obrázku
             print(f"✅ File successfully saved: {filepath}")
         except Exception as e:
             print(f"❌ Error saving file: {e}")
@@ -181,6 +182,12 @@ def edit_books():
         return redirect(url_for("books"))  # 
 
     return render_template("edit_books.html", books=books, form=form)
+
+def optimize_image(filepath):       # zmenší velikost obrázku - zavolá se po jeho uložení
+    with Image.open(filepath) as img:
+        img = img.resize((1024, 1024))  # Resize to a maximum of 1024x1024
+        img.save(filepath, optimize=True, quality=85)  # Compress the image
+
 if __name__ == "__main__":
     app.run(debug=True)
 
