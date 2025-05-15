@@ -7,9 +7,10 @@
 <p>Nahraj fotku tvých knih a aplikace ti vypíše seznam knih a autorů</p>
 <p>Ideálně nahraj fotku hřbetu knih vyfocených v tvé knihovně</p>
 <p>Můžeš k nim přidat své hodnocení a komentáře</p>
+
 <form method="POST" enctype="multipart/form-data">
     <input type="file" name="image">
-    <input type="submit" value="Nahrát obrázek">
+    <input type="submit" value="Převést na text">
     <a href="{{ url_for('books') }}">Seznam všech knih</a>
 </form>
 
