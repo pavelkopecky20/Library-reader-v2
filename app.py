@@ -185,8 +185,8 @@ def edit_books():
 
 def optimize_image(filepath):       # zmenší velikost obrázku - zavolá se po jeho uložení
     with Image.open(filepath) as img:
-        img = img.resize((1024, 1024))  # Resize to a maximum of 1024x1024
-        img.save(filepath, optimize=True, quality=85)  # Compress the image
+        img = img.resize((1024, 1024))  # zmenšení na maximum 1024x1024
+        img.save(filepath, optimize=True, quality=85)  # komprese obrázku
 
 if __name__ == "__main__":
     app.run(debug=True)
