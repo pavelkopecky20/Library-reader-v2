@@ -14,7 +14,6 @@
     <a href="{{ url_for('books') }}">Seznam všech knih</a>
 </form>
 
-<script src="https://cdn.jsdelivr.net/npm/pica/dist/pica.min.js"></script>
 <script>
     async function resizeImage(file) {
         const pica = new Pica();
@@ -29,11 +28,32 @@
 
         await new Promise((resolve) => (img.onload = resolve));
 
-        canvas.width = 1024; // Resize width
-        canvas.height = (img.height / img.width) * 1024; // Maintain aspect ratio
+        // Calculate new dimensions while maintaining aspect ratio
+        const maxWidth = 1024;
+        const maxHeight = 1024;
+        let width = img.width;
+        let height = img.height;
 
-        const resizedCanvas = await pica.resize(img, canvas);
-        const blob = await pica.toBlob(resizedCanvas, 'image/jpeg', 0.85); // Compress to 85% quality
+        if (width > height) {
+            if (width > maxWidth) {
+                height = Math.round((height * maxWidth) / width);
+                width = maxWidth;
+            }
+        } else {
+            if (height > maxHeight) {
+                width = Math.round((width * maxHeight) / height);
+                height = maxHeight;
+            }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        // Resize the image
+        await pica.resize(img, canvas);
+
+        // Compress the image
+        const blob = await pica.toBlob(canvas, 'image/jpeg', 0.85); // 85% quality
 
         return new File([blob], file.name, { type: 'image/jpeg' });
     }
@@ -43,15 +63,18 @@
         const file = fileInput.files[0];
 
         if (file) {
+            console.log('Original file size:', file.size / 1024, 'KB');
+
             // Resize and compress the image
             const resizedFile = await resizeImage(file);
-            console.log('Original file size:', file.size / 1024, 'KB');
             console.log('Resized file size:', resizedFile.size / 1024, 'KB');
 
             // Replace the original file with the resized file
             const dataTransfer = new DataTransfer();
             dataTransfer.items.add(resizedFile);
             fileInput.files = dataTransfer.files;
+
+            console.log('File replaced with resized version.');
         }
     });
 </script>
