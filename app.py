@@ -91,20 +91,23 @@ def index():
         try:
             text = detect_text_from_file(filepath)
             print(f"✅ Text detected: {text}")
+        except RuntimeError as e:
+            print(f"❌ Error detecting text: {e}")
+            return render_template("index.html", error=str(e))
         except Exception as e:
             print(f"❌ Error detecting text: {e}")
-            return render_template("index.html", error="Chyba při zpracování obrázku.")
-        
+            return render_template("index.html", error="Chyba při čtení obrázku (Google Vision API).")
+
         try:
             books = get_books_and_authors(text)
             print(f"✅ Books detected: {books}")
         except Exception as e:
             print(f"❌ Error detecting books: {e}")
-            return render_template("index.html", error="Chyba při rozpoznávání knih.")
-        
+            return render_template("index.html", error=f"Chyba při rozpoznávání knih (OpenAI): {e}")
+
         if not books:
             print("❌ No books detected.")
-            return render_template("index.html", error="Nebyly rozpoznány žádné knihy.")
+            return render_template("index.html", error="Nebyly rozpoznány žádné knihy. Zkuste fotku s lepší viditelností hřbetů.")
         
         # Save to database
         try:

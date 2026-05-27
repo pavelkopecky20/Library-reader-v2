@@ -1,5 +1,6 @@
 import io
 import os
+import re
 from google.cloud import vision
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -29,32 +30,28 @@ openai_client = OpenAI(api_key=_openai_api_key)
     
        
 def detect_text_from_file(image):
-    try:
-        client = vision.ImageAnnotatorClient()
+    client = vision.ImageAnnotatorClient()
 
-        # Pokud je to objekt PIL.Image (např. z Pillow), převedeme ho do bytes
-        if hasattr(image, 'save'):
-            image_bytes = io.BytesIO()
-            image.save(image_bytes, format='JPEG')  # nebo 'PNG', podle formátu
-            content = image_bytes.getvalue()
-        elif isinstance(image, str):
-            # Jinak očekáváme cestu k souboru
-            with io.open(image, 'rb') as file:
-                content = file.read()
-        else:
-            raise ValueError("Neplatný typ vstupu – očekáván obrázek nebo cesta k souboru.")
+    if hasattr(image, 'save'):
+        image_bytes = io.BytesIO()
+        image.save(image_bytes, format='JPEG')
+        content = image_bytes.getvalue()
+    elif isinstance(image, str):
+        with io.open(image, 'rb') as file:
+            content = file.read()
+    else:
+        raise ValueError("Neplatný typ vstupu – očekáván obrázek nebo cesta k souboru.")
 
-        vision_image = vision.Image(content=content)
-        response = client.text_detection(image=vision_image)
-        texts = response.text_annotations
+    response = client.text_detection(image=vision.Image(content=content))
 
-        if texts:
-            return texts[0].description
-        else:
-            return "Nebyly rozpoznány žádné texty."
-    except Exception as e:
-        print(f"❌ Error in Vision API: {e}")
-        return "Error in Vision API"
+    if response.error.message:
+        raise RuntimeError(f"Google Vision API chyba: {response.error.message}")
+
+    texts = response.text_annotations
+    if not texts:
+        raise RuntimeError("Na obrázku nebyl rozpoznán žádný text.")
+
+    return texts[0].description
 
 
 # client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))  # - původní, změnilo se knihovna import openai
@@ -110,7 +107,9 @@ def get_books_and_authors(text):
             print("✅ Odpověď z OpenAI:")
             print(assistent_response)
 
-            response_data = json.loads(assistent_response)   # s tímto budeme dále pracovat - např do db !!!
+            # GPT někdy obalí JSON do markdown bloku ```json ... ```
+            cleaned = re.sub(r"^```(?:json)?\s*|\s*```$", "", assistent_response.strip(), flags=re.MULTILINE)
+            response_data = json.loads(cleaned)
             return(response_data)
         
         except Exception as e:
