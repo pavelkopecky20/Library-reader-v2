@@ -2,7 +2,7 @@ import io
 import os
 from google.cloud import vision
 from dotenv import load_dotenv
-import openai
+from openai import OpenAI
 import json
 
 # Nastavíme proměnnou prostředí k API klíči
@@ -19,11 +19,13 @@ else:
     print(f"✅ Credentials file found: {credentials_path}")
     
 # Debugging environment variable for OpenAI API key
-openai.api_key = os.getenv("OPENAI_API_KEY")
-if not openai.api_key:
+_openai_api_key = os.getenv("OPENAI_API_KEY")
+if not _openai_api_key:
     print("❌ OPENAI_API_KEY is not set.")
 else:
-    print("✅ OPENAI_API_KEY is set.")    
+    print("✅ OPENAI_API_KEY is set.")
+
+openai_client = OpenAI(api_key=_openai_api_key)    
     
        
 def detect_text_from_file(image):
@@ -94,9 +96,9 @@ def get_books_and_authors(text):
 
     # ===== REÁLNÉ API VOLÁNÍ =====
     else:
-        try: 
+        try:
             print("🔄 Posílám dotaz na OpenAI...")
-            response = openai.ChatCompletion.create(
+            response = openai_client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system", "content": prompt_system},

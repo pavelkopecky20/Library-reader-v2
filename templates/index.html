@@ -8,9 +8,14 @@
 <p>Ideálně nahraj fotku hřbetu knih</p>
 <p>Budeš k nim moci přidat své hodnocení a komentáře</p>
 
+{% if error %}
+<p style="color: red;">{{ error }}</p>
+{% endif %}
+
 <form id="uploadForm" method="POST" enctype="multipart/form-data">
     <div class="file-input-container">
         <input type="file" name="image" id="image">
+        <span id="fileStatus">Soubor nevybrán</span>
     </div>
     <input type="submit" value="Převést na text">
     <a href="{{ url_for('books') }}">Seznam všech knih</a>
