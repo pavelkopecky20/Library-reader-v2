@@ -1,35 +1,64 @@
 {% extends "base.html" %}
 
-{% block title %}Seznam knih{% endblock %}
+{% block title %}Moje knihy – Library Reader{% endblock %}
 
 {% block content %}
-<main class="books-page">
-<a href="{{ url_for('index') }}">Zpět na hlavní stránku</a>
-<h1>Rozpoznané knihy</h1>
-<table border="1">
-    <tr>
-        <th>Název knihy</th>
-        <th>Autor</th>
-        <th>Přečteno</th>
-        <th>Hodnocení</th>
-        <th>Abstrakt</th>
-        <th>Komentář</th>
-        <th>Akce</th> <!-- Tady přidáváme chybějící hlavičku pro sloupec „Upravit“ -->
-    </tr>
+<div class="books-header">
+    <div>
+        <h1>Moje knihy</h1>
+        <p class="books-count">{{ books|length }} knih celkem</p>
+    </div>
+    <a href="{{ url_for('index') }}" class="btn btn-primary">+ Nahrát další</a>
+</div>
 
-    {% for book in books %}
-        <tr>
-            <td>{{ book.title }}</td>
-            <td>{{ book.author }}</td>
-            <td>{{ 'Ano' if book.is_read else 'Ne' }}</td>
-            <td>{{ book.rating or '' }}</td>
-            <td>{{ book.abstract or '' }}</td>
-            <td>{{ book.comment or '' }}</td>
-            <td><a href="{{ url_for('edit_books', book_id=book.id) }}">Upravit</a></td>
-        </tr>
-    {% endfor %}
-</table>
-<br>
-<a href="{{ url_for('index') }}">Zpět na hlavní stránku</a>
-</main>
+{% if error %}
+<div class="error-msg">{{ error }}</div>
+{% endif %}
+
+<div class="books-grid">
+    {% if books %}
+        {% for book in books %}
+        <div class="book-card">
+            <div>
+                <div class="book-card-title">{{ book.title }}</div>
+                <div class="book-card-author">{{ book.author }}</div>
+            </div>
+
+            <div class="book-card-meta">
+                {% if book.is_read %}
+                <span class="badge badge-read">✓ Přečteno</span>
+                {% else %}
+                <span class="badge badge-unread">Nepřečteno</span>
+                {% endif %}
+                {% if book.rating %}
+                <span class="book-rating">★ {{ book.rating }}/10</span>
+                {% endif %}
+            </div>
+
+            {% if book.abstract %}
+            <div class="book-card-text">
+                <strong>Abstrakt</strong>
+                {{ book.abstract }}
+            </div>
+            {% endif %}
+
+            {% if book.comment %}
+            <div class="book-card-text">
+                <strong>Komentář</strong>
+                {{ book.comment }}
+            </div>
+            {% endif %}
+
+            <div class="book-card-footer">
+                <a href="{{ url_for('edit_books') }}" class="btn btn-secondary">Upravit</a>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <p>Zatím tu nejsou žádné knihy.</p>
+            <a href="{{ url_for('index') }}" class="btn btn-primary">Nahrát první fotku</a>
+        </div>
+    {% endif %}
+</div>
 {% endblock %}

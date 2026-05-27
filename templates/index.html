@@ -1,54 +1,58 @@
 {% extends "base.html" %}
 
-{% block title %}Home - Library Reader{% endblock %}
+{% block title %}Library Reader – Nahrát knihy{% endblock %}
 
 {% block content %}
-<h2>Vítejte v aplikaci Library Reader</h2> 
-<p>Nahraj fotku tvých knih a aplikace ti vypíše seznam knih a autorů</p>
-<p>Ideálně nahraj fotku hřbetu knih</p>
-<p>Budeš k nim moci přidat své hodnocení a komentáře</p>
+<div class="upload-section">
+    <h2>Vyfotografuj své knihy</h2>
+    <p class="subtitle">
+        Nahraj fotku hřbetů knih a aplikace automaticky rozpozná názvy a autory.
+    </p>
 
-{% if error %}
-<p style="color: red;">{{ error }}</p>
-{% endif %}
+    {% if error %}
+    <div class="error-msg">{{ error }}</div>
+    {% endif %}
 
-<form id="uploadForm" method="POST" enctype="multipart/form-data">
-    <div class="file-input-container">
-        <input type="file" name="image" id="image">
-        <span id="fileStatus">Soubor nevybrán</span>
+    <div class="upload-card">
+        <form id="uploadForm" method="POST" enctype="multipart/form-data">
+            <div class="file-input-wrapper">
+                <label for="image" class="file-label">
+                    <span class="icon">📷</span>
+                    <span>Klikni pro výběr fotky</span>
+                    <span style="font-size:0.8rem">JPG, PNG – max. 4 MB</span>
+                </label>
+                <input type="file" name="image" id="image" accept="image/*">
+            </div>
+            <span id="fileStatus">Žádný soubor nevybrán</span>
+            <input type="submit" value="Rozpoznat knihy">
+        </form>
     </div>
-    <input type="submit" value="Převést na text">
-    <a href="{{ url_for('books') }}">Seznam všech knih</a>
-</form>
+</div>
 
 <script>
-    document.getElementById('uploadForm').addEventListener('submit', (event) => {
-        const fileInput = document.getElementById('image');
-        const file = fileInput.files[0];
-
-        if (file) {
-            const fileSizeMB = file.size / (1024 * 1024); // Convert file size to MB
-            if (fileSizeMB > 4) { // Check if file size exceeds 4 MB
-                alert('Soubor je příliš velký. Maximální velikost je 4 MB.');
-                event.preventDefault(); // Prevent form submission
-                return;
-            }
+    document.getElementById('image').addEventListener('change', (event) => {
+        const fileStatus = document.getElementById('fileStatus');
+        const files = event.target.files;
+        if (files.length > 0) {
+            fileStatus.textContent = files[0].name;
+            fileStatus.classList.add('selected');
         } else {
-            alert('Vyberte prosím soubor.');
-            event.preventDefault(); // Prevent form submission
+            fileStatus.textContent = 'Žádný soubor nevybrán';
+            fileStatus.classList.remove('selected');
         }
     });
 
-    // Update the "Soubor nevybrán" text when a file is selected
-    document.getElementById('image').addEventListener('change', (event) => {
-        const fileInput = event.target;
-        const fileStatus = document.getElementById('fileStatus');
-        if (fileInput.files.length > 0) {
-            fileStatus.textContent = fileInput.files[0].name;
-        } else {
-            fileStatus.textContent = 'Soubor nevybrán';
+    document.getElementById('uploadForm').addEventListener('submit', (event) => {
+        const file = document.getElementById('image').files[0];
+        if (!file) {
+            alert('Vyberte prosím soubor.');
+            event.preventDefault();
+            return;
+        }
+        if (file.size / (1024 * 1024) > 4) {
+            alert('Soubor je příliš velký. Maximální velikost je 4 MB.');
+            event.preventDefault();
         }
     });
 </script>
-
 {% endblock %}
