@@ -115,9 +115,9 @@ def get_books_and_authors(text):
         except Exception as e:
             print("❌ Chyba při volání OpenAI API:")
             print(e)
-            response_data = []
-            
-    return(response_data)
+            raise RuntimeError(f"OpenAI API: {e}")
+
+    return response_data
 
     # # ===== VÝSTUP =====              # PAK PŘEPÍŠU DO CYKLU V ŠABLONĚ
     # print("\n📚 Rozpoznané knihy:")
